@@ -1,0 +1,12 @@
+{
+  "name": "react",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "private": true,
+  "workspaces": [
+    "api",
+    "web"
+  ],
+  "packageManager": "pnpm@10.15.0"
+}
