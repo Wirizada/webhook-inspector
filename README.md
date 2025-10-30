@@ -56,3 +56,4 @@ Migrations (Drizzle):
 - Fastify, fastify-type-provider-zod
 - Drizzle ORM / drizzle-kit
 - React, Vite
+
