@@ -46,6 +46,3 @@ Migrations (Drizzle):
 - Drizzle ORM / drizzle-kit
 - React, Vite
 
-## Observações
-- Ajuste scripts `dev`, `build` e `start` nos package.json de cada pacote se necessário.
-- Para dúvidas específicas sobre arquivos do workspace, informe qual arquivo deseja abrir.
