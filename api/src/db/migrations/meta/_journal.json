@@ -8,6 +8,13 @@
       "when": 1761767706930,
       "tag": "0000_shallow_sauron",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1762374308699,
+      "tag": "0001_curved_vulcan",
+      "breakpoints": true
     }
   ]
 }

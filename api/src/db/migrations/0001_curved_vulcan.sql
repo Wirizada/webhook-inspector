@@ -1,0 +1,1 @@
+ALTER TABLE "webhooks" ALTER COLUMN "content_type" DROP NOT NULL;

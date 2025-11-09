@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 
 interface SectionTitleProps extends ComponentProps<'h3'> {}
 
-export function SectionTittle({ className, ...props }: SectionTitleProps) {
+export function SectionTitle({ className, ...props }: SectionTitleProps) {
   return (
     <h3
       className={twMerge('text-base font-semibold text-zinc-100', className)}
