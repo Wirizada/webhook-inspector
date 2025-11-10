@@ -5,7 +5,6 @@ import { Trash2Icon } from 'lucide-react'
 import { Checkbox } from './ui/checkbox'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-
 interface WebhookListItemProps {
   webhook: {
     id: string

@@ -1,99 +1,99 @@
-import { Loader2, Wand2 } from "lucide-react";
-import { webhookListSchema } from "../http/schemas/webhooks";
-import { WebhooksListItem } from "./webhooks-list-item";
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
-import { CodeBlock } from "./ui/code-block";
-import * as Dialog from "@radix-ui/react-dialog";
+import { Loader2, Wand2 } from 'lucide-react'
+import * as Dialog from '@radix-ui/react-dialog'
+import { webhookListSchema } from '../http/schemas/webhooks'
+import { WebhooksListItem } from './webhooks-list-item'
+import {
+  useSuspenseInfiniteQuery,
+} from '@tanstack/react-query'
+import { useEffect, useRef, useState } from 'react'
+import { CodeBlock } from './ui/code-block'
 
 export function WebhooksList() {
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+  const observerRef = useRef<IntersectionObserver>(null)
 
-  const [checkedWebhooksIds, setCheckedWebhooksIds] = useState<string[]>([]);
-  const [generatedHandlerCode, setGeneratedHandlerCode] = useState<
-    string | null
-  >(null);
+  const [checkedWebhooksIds, setCheckedWebhooksIds] = useState<string[]>([])
+  const [generatedHandlerCode, setGeneratedHandlerCode] = useState<string | null>(null)
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useSuspenseInfiniteQuery({
-      queryKey: ["webhooks"],
+      queryKey: ['webhooks'],
       queryFn: async ({ pageParam }) => {
-        const url = new URL("http://localhost:3333/api/webhooks");
+        const url = new URL('http://localhost:3333/api/webhooks')
 
         if (pageParam) {
-          url.searchParams.set("cursor", pageParam);
+          url.searchParams.set('cursor', pageParam)
         }
 
-        const response = await fetch(url);
-        const data = await response.json();
+        const response = await fetch(url)
+        const data = await response.json()
 
-        return webhookListSchema.parse(data);
+        return webhookListSchema.parse(data)
       },
       getNextPageParam: (lastPage) => {
-        return lastPage.nextCursor ?? undefined;
+        return lastPage.nextCursor ?? undefined
       },
       initialPageParam: undefined as string | undefined,
-    });
+    })
 
-  const webhooks = data.pages.flatMap((page) => page.webhooks);
+  const webhooks = data.pages.flatMap((page) => page.webhooks)
 
   useEffect(() => {
     if (observerRef.current) {
-      observerRef.current.disconnect();
+      observerRef.current.disconnect()
     }
 
     observerRef.current = new IntersectionObserver(
       (entries) => {
-        const entry = entries[0];
+        const entry = entries[0]
 
         if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
+          fetchNextPage()
         }
       },
       {
         threshold: 0.1,
-      }
-    );
+      },
+    )
 
     if (loadMoreRef.current) {
-      observerRef.current.observe(loadMoreRef.current);
+      observerRef.current.observe(loadMoreRef.current)
     }
 
     return () => {
       if (observerRef.current) {
-        observerRef.current.disconnect();
+        observerRef.current.disconnect()
       }
-    };
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   function handleCheckWebhook(checkedWebhookId: string) {
     if (checkedWebhooksIds.includes(checkedWebhookId)) {
-      setCheckedWebhooksIds((state) => {
-        return state.filter((webhookId) => webhookId !== checkedWebhookId);
-      });
+      setCheckedWebhooksIds(state => {
+        return state.filter(webhookId => webhookId !== checkedWebhookId)
+      })
     } else {
-      setCheckedWebhooksIds((state) => [...state, checkedWebhookId]);
+      setCheckedWebhooksIds(state => [...state, checkedWebhookId])
     }
   }
 
   async function handleGenerateHandler() {
-    const response = await fetch("http://localhost:3333/api/generate", {
-      method: "POST",
+    const response = await fetch('http://localhost:3333/api/generate', {
+      method: 'POST',
       body: JSON.stringify({ webhookIds: checkedWebhooksIds }),
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json'
       },
-    });
+    })
 
-    type GenerateResponse = { code: string };
+    type GenerateResponse = { code: string }
 
-    const data: GenerateResponse = await response.json();
+    const data: GenerateResponse = await response.json()
 
-    setGeneratedHandlerCode(data.code);
+    setGeneratedHandlerCode(data.code)
   }
 
-  const hasAnyWebhookChecked = checkedWebhooksIds.length > 0;
+  const hasAnyWebhookChecked = checkedWebhooksIds.length > 0
 
   return (
     <>
@@ -116,7 +116,7 @@ export function WebhooksList() {
                 onWebhookChecked={handleCheckWebhook}
                 isWebhookChecked={checkedWebhooksIds.includes(webhook.id)}
               />
-            );
+            )
           })}
         </div>
 
@@ -134,7 +134,6 @@ export function WebhooksList() {
       {!!generatedHandlerCode && (
         <Dialog.Root defaultOpen>
           <Dialog.Overlay className="bg-black/60 inset-0 fixed z-20" />
-
           <Dialog.Content className="flex items-center justify-center fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] -translate-x-1/2 -translate-y-1/2 z-40">
             <div className="bg-zinc-900 w-[600px] p-4 rounded-lg border border-zinc-800 max-h-[620px] overflow-y-auto">
               <CodeBlock language="typescript" code={generatedHandlerCode} />
@@ -143,5 +142,5 @@ export function WebhooksList() {
         </Dialog.Root>
       )}
     </>
-  );
+  )
 }
